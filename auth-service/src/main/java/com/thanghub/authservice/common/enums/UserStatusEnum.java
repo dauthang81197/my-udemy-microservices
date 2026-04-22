@@ -1,4 +1,7 @@
 package com.thanghub.authservice.common.enums;
 
-public class UserStatusEnum {
+public enum UserStatusEnum {
+    ACTIVE,
+    BLOCKED,
+    PENDING
 }

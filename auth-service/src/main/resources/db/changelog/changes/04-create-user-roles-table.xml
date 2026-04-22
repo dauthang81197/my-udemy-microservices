@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+
+    <!-- ================================================= -->
+    <!-- 004 CREATE USER-ROLES                                  -->
+    <!-- ================================================= -->
+    <changeSet id="04-create-user-roles-table" author="thangdt">
+        <createTable tableName="user_roles">
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="role_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="assigned_at" type="TIMESTAMP"/>
+
+        </createTable>
+
+
+        <addPrimaryKey
+                tableName="user_roles"
+                columnNames="user_id, role_id"
+                constraintName="pk_user_roles"/>
+    </changeSet>
+
+
+</databaseChangeLog>
+

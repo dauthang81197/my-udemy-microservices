@@ -5,6 +5,15 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <include file="db/changelog/changes/01-create-users-table.xml"/>
-    <include file="db/changelog/changes/02-create-base-entity-seq.xml"/>
+    <include file="/db/changelog/changes/01-create-users-table.xml"/>
+    <include file="/db/changelog/changes/02-create-permissions-table.xml"/>
+    <include file="/db/changelog/changes/03-create-roles-table.xml"/>
+    <include file="/db/changelog/changes/04-create-user-roles-table.xml"/>
+    <include file="/db/changelog/changes/05-create-role-permissions-table.xml"/>
+    <include file="/db/changelog/changes/06-create-refresh-token-table.xml"/>
+    <include file="/db/changelog/changes/07-create-password-reset-token-table.xml"/>
+    <include file="/db/changelog/changes/08-create-verification-tokens-table.xml"/>
+    <include file="/db/changelog/changes/09-create-indexes.xml"/>
+    <include file="/db/changelog/changes/10-update-users-table.xml"/>
+
 </databaseChangeLog>

@@ -9,7 +9,7 @@
     <!-- ================================================= -->
     <!-- 001 CREATE USERS                                  -->
     <!-- ================================================= -->
-    <changeSet id="001-create-users" author="chatgpt">
+    <changeSet id="01-create-users-table" author="thangdt">
         <createTable tableName="users">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
@@ -31,12 +31,9 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="enabled" type="BOOLEAN" defaultValueBoolean="true">
-                <constraints nullable="false"/>
-            </column>
-
             <column name="created_at" type="TIMESTAMP"/>
             <column name="updated_at" type="TIMESTAMP"/>
+            <column name="deleted_at" type="TIMESTAMP"/>
         </createTable>
     </changeSet>
 

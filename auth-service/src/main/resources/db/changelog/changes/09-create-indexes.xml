@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ================================================= -->
+    <!-- INDEXES                                           -->
+    <!-- ================================================= -->
+    <changeSet id="09-create-indexes" author="thangdt">
+
+        <createIndex tableName="users" indexName="idx_users_email">
+            <column name="email"/>
+        </createIndex>
+
+        <createIndex tableName="refresh_tokens" indexName="idx_refresh_tokens_user_id">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex tableName="password_reset_tokens" indexName="idx_password_reset_user_id">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex tableName="verification_tokens" indexName="idx_verification_user_id">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex tableName="user_roles" indexName="idx_user_roles_user_id">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex tableName="user_roles" indexName="idx_user_roles_role_id">
+            <column name="role_id"/>
+        </createIndex>
+
+        <createIndex tableName="role_permissions" indexName="idx_role_permissions_role_id">
+            <column name="role_id"/>
+        </createIndex>
+
+        <createIndex tableName="role_permissions" indexName="idx_role_permissions_permission_id">
+            <column name="permission_id"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>
+

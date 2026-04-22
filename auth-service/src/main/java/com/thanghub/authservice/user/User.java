@@ -2,9 +2,8 @@ package com.thanghub.authservice.user;
 
 
 import com.thanghub.authservice.common.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.thanghub.authservice.common.enums.UserStatusEnum;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,11 +25,18 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String username;
 
+    @Column(nullable = false)
+    private String full_name;
+
     @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatusEnum status;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

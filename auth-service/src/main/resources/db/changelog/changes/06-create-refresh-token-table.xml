@@ -7,29 +7,32 @@
 
 
     <!-- ================================================= -->
-    <!-- 001 CREATE USERS                                  -->
+    <!-- 006 CREATE REFRESH TOKEN                                  -->
     <!-- ================================================= -->
-    <changeSet id="01-create-users-table" author="thangdt">
-        <createTable tableName="users">
+    <changeSet id="06-create-permission-table" author="thangdt">
+        <createTable tableName="refresh_tokens">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
-            <column name="email" type="VARCHAR(150)">
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="token" type="VARCHAR(500)">
                 <constraints nullable="false" unique="true"/>
             </column>
 
-            <column name="password" type="VARCHAR(255)">
+            <column name="expired_at" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="full_name" type="VARCHAR(100)">
+            <column name="revoked" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="status" type="VARCHAR(30)">
-                <constraints nullable="false"/>
-            </column>
+
+            <column name="device_info" type="VARCHAR(255)"/>
 
             <column name="created_at" type="TIMESTAMP"/>
             <column name="updated_at" type="TIMESTAMP"/>

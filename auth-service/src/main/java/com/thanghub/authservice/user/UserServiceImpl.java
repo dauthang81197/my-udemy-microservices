@@ -1,5 +1,6 @@
 package com.thanghub.authservice.user;
 
+import com.thanghub.authservice.common.enums.UserStatusEnum;
 import com.thanghub.authservice.security.JwtService;
 import com.thanghub.authservice.user.request.LoginRequestDto;
 import com.thanghub.authservice.user.request.RegisterRequestDto;
@@ -59,6 +60,8 @@ public class UserServiceImpl implements UserService {
                 .email(registerRequestDto.getEmail())
                 .username(registerRequestDto.getUsername())
                 .password(passwordEncoder.encode(registerRequestDto.getPassword()))
+                .full_name(registerRequestDto.getFullName())
+                .status(UserStatusEnum.ACTIVE)
                 .build();
 
         // Step 3: Save Database

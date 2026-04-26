@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // Skip field null when serialize
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponseBase<T> {
 
     private boolean success;

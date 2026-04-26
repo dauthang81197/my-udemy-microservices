@@ -1,7 +1,7 @@
 package com.thanghub.courseservice.course;
 
-import com.thanghub.courseservice.common.mapper.PaginationMapper;
-import com.thanghub.courseservice.common.response.PaginationResponse;
+import com.thanghub.common.mapper.PaginationMapper;
+import com.thanghub.common.response.PaginationResponse;
 import com.thanghub.courseservice.course.response.CourseResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;

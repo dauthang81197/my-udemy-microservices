@@ -1,6 +1,6 @@
 package com.thanghub.authservice.passwordResetToken;
 
-import com.thanghub.authservice.common.BaseEntity;
+import com.thanghub.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

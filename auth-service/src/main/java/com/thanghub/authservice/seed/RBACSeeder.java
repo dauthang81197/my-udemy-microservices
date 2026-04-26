@@ -1,6 +1,6 @@
 package com.thanghub.authservice.seed;
 
-import com.thanghub.authservice.common.enums.UserStatusEnum;
+import com.thanghub.common.enums.UserStatusEnum;
 import com.thanghub.authservice.permission.Permission;
 import com.thanghub.authservice.permission.PermissionRepository;
 import com.thanghub.authservice.role.Role;

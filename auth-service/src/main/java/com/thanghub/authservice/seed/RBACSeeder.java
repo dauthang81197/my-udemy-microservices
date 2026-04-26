@@ -13,6 +13,7 @@ import com.thanghub.authservice.userRole.UserRole;
 import com.thanghub.authservice.userRole.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,9 @@ public class RBACSeeder implements CommandLineRunner {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public void run(String... args) throws Exception {
         // User
@@ -50,9 +54,13 @@ public class RBACSeeder implements CommandLineRunner {
                                 existing -> {
                                     existing.setFull_name(u.getFull_name());
                                     existing.setStatus(u.getStatus());
+                                    existing.setPassword(passwordEncoder.encode(u.getPassword()));
                                     userRepository.save(existing);
                                 },
-                                () -> userRepository.save(u)
+                                () -> {
+                                    u.setPassword(passwordEncoder.encode(u.getPassword()));
+                                    userRepository.save(u);
+                                }
                         )
         );
         System.out.println("✅ Seeded/updated " + users.size() + " users");

@@ -1,7 +1,7 @@
 package com.thanghub.courseservice.course.response;
 
-import com.thanghub.courseservice.common.enums.CourseStatusEnum;
-import com.thanghub.courseservice.common.enums.LevelEnum;
+import com.thanghub.common.enums.CourseStatusEnum;
+import com.thanghub.common.enums.LevelEnum;
 import lombok.Builder;
 
 import java.util.UUID;

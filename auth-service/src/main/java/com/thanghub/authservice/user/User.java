@@ -1,8 +1,8 @@
 package com.thanghub.authservice.user;
 
 
-import com.thanghub.authservice.common.BaseEntity;
-import com.thanghub.authservice.common.enums.UserStatusEnum;
+import com.thanghub.common.BaseEntity;
+import com.thanghub.common.enums.UserStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

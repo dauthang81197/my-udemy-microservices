@@ -1,4 +1,4 @@
-package com.thanghub.courseservice.common.enums;
+package com.thanghub.common.enums;
 
 public enum LessonTypeEnum {
     VIDEO,

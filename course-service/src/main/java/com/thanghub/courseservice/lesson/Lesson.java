@@ -1,8 +1,8 @@
 package com.thanghub.courseservice.lesson;
 
-import com.thanghub.courseservice.common.BaseEntity;
-import com.thanghub.courseservice.common.enums.CourseStatusEnum;
-import com.thanghub.courseservice.common.enums.LessonTypeEnum;
+import com.thanghub.common.BaseEntity;
+import com.thanghub.common.enums.CourseStatusEnum;
+import com.thanghub.common.enums.LessonTypeEnum;
 import com.thanghub.courseservice.section.Section;
 import jakarta.persistence.*;
 import lombok.*;

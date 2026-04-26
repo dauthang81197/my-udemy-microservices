@@ -1,6 +1,6 @@
 package com.thanghub.authservice.user;
 
-import com.thanghub.authservice.common.enums.UserStatusEnum;
+import com.thanghub.common.enums.UserStatusEnum;
 import com.thanghub.authservice.security.JwtService;
 import com.thanghub.authservice.user.request.LoginRequestDto;
 import com.thanghub.authservice.user.request.RegisterRequestDto;

@@ -1,6 +1,6 @@
 package com.thanghub.authservice.user;
 
-import com.thanghub.authservice.common.ApiResponseBase;
+import com.thanghub.common.ApiResponseBase;
 import com.thanghub.authservice.user.UserService;
 import com.thanghub.authservice.user.request.LoginRequestDto;
 import com.thanghub.authservice.user.request.RegisterRequestDto;

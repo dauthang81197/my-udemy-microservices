@@ -1,6 +1,6 @@
-package com.thanghub.authservice.common.mapper;
+package com.thanghub.common.mapper;
 
-import com.thanghub.authservice.common.response.PaginationResponse;
+import com.thanghub.common.response.PaginationResponse;
 import org.springframework.data.domain.Page;
 
 public class PaginationMapper {

@@ -1,4 +1,4 @@
-package com.thanghub.authservice.common;
+package com.thanghub.common;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,6 +40,4 @@ public abstract class BaseEntity {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-
 }

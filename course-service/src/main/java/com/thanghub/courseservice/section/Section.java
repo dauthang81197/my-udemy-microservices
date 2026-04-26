@@ -1,6 +1,6 @@
 package com.thanghub.courseservice.section;
 
-import com.thanghub.courseservice.common.BaseEntity;
+import com.thanghub.common.BaseEntity;
 import com.thanghub.courseservice.course.Course;
 import com.thanghub.courseservice.lesson.Lesson;
 import jakarta.persistence.*;

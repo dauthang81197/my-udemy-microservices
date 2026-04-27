@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/courses")
+@RequestMapping
 @RequiredArgsConstructor
 @Tag(name = "")
 public class CourseController {

@@ -22,10 +22,14 @@ public class OpenApiConfig {
     @Value("${openapi.gateway-url}")
     private String gatewayUrl;
 
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
+
+
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .servers(List.of(new Server().url(gatewayUrl).description("API Gateway")))
+                .servers(List.of(new Server().url(gatewayUrl + contextPath).description("API Gateway")))
                 .info(new Info()
                         .title("My Udemy API")
                         .description("Backend API cho ứng dụng My Udemy")

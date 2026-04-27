@@ -31,7 +31,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(ex -> ex
                         .pathMatchers(
-                                "/api/auth/**",
+                                "/api/auth-service/**",
+                                "/api/course-service/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",

@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/admin/courses")
+@RequestMapping("admin/courses")
 @RequiredArgsConstructor
 @Tag(name = "")
 public class CourseAdminController {
     private final CourseService courseService;
 
     @GetMapping()
-    @SecurityRequirements
+//    @SecurityRequirements
     public PaginationResponse<CourseResponse> getCourses(Pageable pageable) {
         Page<CourseResponse> page = courseService.getCourses(pageable);
         return PaginationMapper.from(page);

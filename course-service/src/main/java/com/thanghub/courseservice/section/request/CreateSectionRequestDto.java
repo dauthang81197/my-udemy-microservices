@@ -1,0 +1,28 @@
+package com.thanghub.courseservice.section.request;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class CreateSectionRequestDto {
+    @Schema(
+            description = "Title",
+            example = "Title of course"
+    )
+    private String title;
+    @Schema(
+            description = "Course Id",
+            example = "CourseId of course"
+    )
+    private UUID courseId;
+
+
+}
+

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("admin/courses")
 @RequiredArgsConstructor
-@Tag(name = "")
+@Tag(name = "Course")
 public class CourseAdminController {
     private final CourseService courseService;
 

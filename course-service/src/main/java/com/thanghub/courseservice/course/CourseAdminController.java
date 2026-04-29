@@ -40,6 +40,16 @@ public class CourseAdminController {
             summary = "Course",
             description = "Return Course"
     )
+    @GetMapping(":id")
+    public ResponseEntity<?> getCourses(@RequestParam("id") String id) {
+        CourseResponse course = courseService.getCourse(id);
+        return ResponseEntity.ok(ApiResponseBase.ok("Login successfully", course));
+    }
+
+    @Operation(
+            summary = "Course",
+            description = "Return Course"
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Create Course successfully"),
             @ApiResponse(responseCode = "401", description = "Check token and role")
@@ -61,6 +71,21 @@ public class CourseAdminController {
     @PutMapping(":id")
     public ResponseEntity<?> updateCourse(@RequestParam("id") String id, UpdateCourseRequestDto request) {
         Course createCourseRequestDto = courseService.updateCourse(id, request);
-        return ResponseEntity.ok(ApiResponseBase.ok("Login successfully", createCourseRequestDto));
+        return ResponseEntity.ok(ApiResponseBase.ok("Update successfully", createCourseRequestDto));
     }
+
+    @Operation(
+            summary = "Course",
+            description = "Return Course "
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Update Course successfully"),
+            @ApiResponse(responseCode = "401", description = "Check token and role")
+    })
+    @DeleteMapping(":id")
+    public ResponseEntity<?> deleteCourse(@RequestParam("id") String id) {
+        Course createCourseRequestDto = courseService.deleteCourse(id);
+        return ResponseEntity.ok(ApiResponseBase.ok("Delete successfully", createCourseRequestDto));
+    }
+
 }

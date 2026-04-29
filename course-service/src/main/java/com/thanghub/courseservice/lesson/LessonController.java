@@ -1,4 +1,4 @@
-package com.thanghub.courseservice.section;
+package com.thanghub.courseservice.lesson;
 
-public class SectionController {
+public class LessonController {
 }

@@ -1,29 +1,24 @@
-package com.thanghub.courseservice.course.request;
+package com.thanghub.courseservice.section.request;
 
-import com.thanghub.common.enums.LevelEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateCourseRequestDto {
+public class UpdateSectionRequestDto {
     @Schema(
             description = "Title",
             example = "Title of course"
     )
     private String title;
     @Schema(
-            description = "Description",
-            example = "Description of course"
+            description = "Course Id",
+            example = "CourseId of course"
     )
-    private String description;
-
-    @Schema(
-            description = "Level",
-            example = "BEGINNER"
-    )
-    private LevelEnum level;
+    private UUID courseId;
 }

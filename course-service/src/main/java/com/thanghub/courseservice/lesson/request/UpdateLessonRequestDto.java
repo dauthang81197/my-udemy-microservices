@@ -1,4 +1,4 @@
-package com.thanghub.courseservice.course.request;
+package com.thanghub.courseservice.lesson.request;
 
 import com.thanghub.common.enums.LevelEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateCourseRequestDto {
+public class UpdateLessonRequestDto {
     @Schema(
             description = "Title",
             example = "Title of course"

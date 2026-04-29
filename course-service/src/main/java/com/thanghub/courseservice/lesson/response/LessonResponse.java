@@ -1,4 +1,4 @@
-package com.thanghub.courseservice.course.response;
+package com.thanghub.courseservice.lesson.response;
 
 import com.thanghub.common.enums.CourseStatusEnum;
 import com.thanghub.common.enums.LevelEnum;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseResponse {
+public class LessonResponse {
     private UUID id;
     private String title;
     private String description;

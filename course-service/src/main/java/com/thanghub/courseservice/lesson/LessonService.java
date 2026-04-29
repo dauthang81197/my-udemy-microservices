@@ -11,9 +11,9 @@ public interface LessonService {
 
     LessonResponse getLesson(String id);
 
-    Lesson createLesson(CreateLessonRequestDto request);
+    LessonResponse createLesson(CreateLessonRequestDto request);
 
-    Lesson updateLesson(String id, UpdateLessonRequestDto request);
+    LessonResponse updateLesson(String id, UpdateLessonRequestDto request);
 
-    Lesson deleteLesson(String id);
+    LessonResponse deleteLesson(String id);
 }

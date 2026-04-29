@@ -54,8 +54,8 @@ public class LessonAdminController {
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
     @PostMapping()
-    public ResponseEntity<?> createSection(CreateLessonRequestDto request) {
-        Lesson createLessonRequestDto = lessonService.createLesson(request);
+    public ResponseEntity<?> createLesson(CreateLessonRequestDto request) {
+        LessonResponse createLessonRequestDto = lessonService.createLesson(request);
         return ResponseEntity.ok(ApiResponseBase.ok("Login successfully", createLessonRequestDto));
     }
 
@@ -68,8 +68,8 @@ public class LessonAdminController {
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
     @PutMapping(":id")
-    public ResponseEntity<?> updateSection(@RequestParam("id") String id, UpdateLessonRequestDto request) {
-        Lesson updateLessonRequestDto = lessonService.updateLesson(id, request);
+    public ResponseEntity<?> updateLesson(@RequestParam("id") String id, UpdateLessonRequestDto request) {
+        LessonResponse updateLessonRequestDto = lessonService.updateLesson(id, request);
         return ResponseEntity.ok(ApiResponseBase.ok("Update successfully", updateLessonRequestDto));
     }
 
@@ -82,8 +82,8 @@ public class LessonAdminController {
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
     @DeleteMapping(":id")
-    public ResponseEntity<?> deleteSection(@RequestParam("id") String id) {
-        Lesson deleteLessonRequestDto = lessonService.deleteLesson(id);
+    public ResponseEntity<?> deleteLesson(@RequestParam("id") String id) {
+        LessonResponse deleteLessonRequestDto = lessonService.deleteLesson(id);
         return ResponseEntity.ok(ApiResponseBase.ok("Delete successfully", deleteLessonRequestDto));
     }
 }

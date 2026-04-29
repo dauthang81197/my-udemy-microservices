@@ -4,6 +4,7 @@ import com.thanghub.common.mapper.PaginationMapper;
 import com.thanghub.common.response.PaginationResponse;
 import com.thanghub.courseservice.section.request.CreateSectionRequestDto;
 import com.thanghub.courseservice.section.request.UpdateSectionRequestDto;
+import com.thanghub.courseservice.section.response.SectionImportResultDto;
 import com.thanghub.courseservice.section.response.SectionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,8 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("admin/sections")
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Section")
 public class SectionAdminController {
     private final SectionService sectionService;
+    private final SectionImportService sectionImportService;
 
     @Operation(
             summary = "Section",
@@ -84,5 +90,25 @@ public class SectionAdminController {
     public ResponseEntity<?> deleteSection(@RequestParam("id") String id) {
         SectionResponse createSectionRequestDto = sectionService.deleteSection(id);
         return ResponseEntity.ok(ApiResponseBase.ok("Delete successfully", createSectionRequestDto));
+    }
+
+    @Operation(
+            summary = "Import sections from Excel",
+            description = "Upload file .xlsx theo template đã download. Trả về kết quả import gồm số dòng thành công và danh sách lỗi."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Import completed (có thể có lỗi một số dòng)"),
+            @ApiResponse(responseCode = "400", description = "File không đúng định dạng")
+    })
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> importSections(
+            @RequestParam("courseId") String courseId,
+            @RequestParam("file") MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponseBase.fail("File không được để trống"));
+        }
+        SectionImportResultDto result = sectionImportService.importFromExcel(courseId, file);
+        return ResponseEntity.ok(ApiResponseBase.ok("Import completed", result));
     }
 }

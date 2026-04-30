@@ -24,8 +24,8 @@ public class CreateLessonRequestDto {
     @Schema(description = "Type", example = "VIDEO")
     private LessonTypeEnum type;
 
-    @Schema(description = "Video URL", example = "https://example.com/video.mp4")
-    private String videoUrl;
+    @Schema(description = "Video file ID", example = "uuid-of-video-file")
+    private UUID videoFileId;
 
     @Schema(description = "Is preview", example = "false")
     private Boolean isPreview;

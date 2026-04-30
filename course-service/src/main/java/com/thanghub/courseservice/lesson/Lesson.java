@@ -3,6 +3,7 @@ package com.thanghub.courseservice.lesson;
 import com.thanghub.common.BaseEntity;
 import com.thanghub.common.enums.CourseStatusEnum;
 import com.thanghub.common.enums.LessonTypeEnum;
+import com.thanghub.courseservice.media.VideoFile;
 import com.thanghub.courseservice.section.Section;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,8 +26,9 @@ public class Lesson extends BaseEntity {
     @Column(nullable = false)
     private LessonTypeEnum type = LessonTypeEnum.VIDEO;
 
-    @Column(nullable = false)
-    private String video_url;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "video_file_id")
+    private VideoFile videoFile;
 
     @Column(nullable = false, columnDefinition = "false")
     private Boolean is_preview;

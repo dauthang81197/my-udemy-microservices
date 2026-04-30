@@ -39,8 +39,8 @@ public class LessonAdminController {
             summary = "Lesson",
             description = "Return Lesson"
     )
-    @GetMapping(":id")
-    public ResponseEntity<?> getLesson(@RequestParam("id") String id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getLesson(@PathVariable String id) {
         LessonResponse Section = lessonService.getLesson(id);
         return ResponseEntity.ok(ApiResponseBase.ok("Login successfully", Section));
     }
@@ -54,7 +54,7 @@ public class LessonAdminController {
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
     @PostMapping()
-    public ResponseEntity<?> createLesson(CreateLessonRequestDto request) {
+    public ResponseEntity<?> createLesson(@RequestBody CreateLessonRequestDto request) {
         LessonResponse createLessonRequestDto = lessonService.createLesson(request);
         return ResponseEntity.ok(ApiResponseBase.ok("Login successfully", createLessonRequestDto));
     }
@@ -67,8 +67,8 @@ public class LessonAdminController {
             @ApiResponse(responseCode = "200", description = "Update Section successfully"),
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
-    @PutMapping(":id")
-    public ResponseEntity<?> updateLesson(@RequestParam("id") String id, UpdateLessonRequestDto request) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateLesson(@PathVariable String id, @RequestBody UpdateLessonRequestDto request) {
         LessonResponse updateLessonRequestDto = lessonService.updateLesson(id, request);
         return ResponseEntity.ok(ApiResponseBase.ok("Update successfully", updateLessonRequestDto));
     }
@@ -81,8 +81,8 @@ public class LessonAdminController {
             @ApiResponse(responseCode = "200", description = "Update Section successfully"),
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
-    @DeleteMapping(":id")
-    public ResponseEntity<?> deleteLesson(@RequestParam("id") String id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteLesson(@PathVariable String id) {
         LessonResponse deleteLessonRequestDto = lessonService.deleteLesson(id);
         return ResponseEntity.ok(ApiResponseBase.ok("Delete successfully", deleteLessonRequestDto));
     }

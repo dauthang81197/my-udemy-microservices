@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,8 +21,8 @@ public class UpdateLessonRequestDto {
     @Schema(description = "Type", example = "VIDEO")
     private LessonTypeEnum type;
 
-    @Schema(description = "Video URL", example = "https://example.com/video.mp4")
-    private String videoUrl;
+    @Schema(description = "Video file ID", example = "uuid-of-video-file")
+    private UUID videoFileId;
 
     @Schema(description = "Is preview", example = "false")
     private Boolean isPreview;

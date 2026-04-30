@@ -4,6 +4,8 @@ import com.thanghub.common.enums.CourseStatusEnum;
 import com.thanghub.courseservice.lesson.request.CreateLessonRequestDto;
 import com.thanghub.courseservice.lesson.request.UpdateLessonRequestDto;
 import com.thanghub.courseservice.lesson.response.LessonResponse;
+import com.thanghub.courseservice.media.VideoFile;
+import com.thanghub.courseservice.media.VideoFileRepository;
 import com.thanghub.courseservice.section.Section;
 import com.thanghub.courseservice.section.SectionRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.UUID;
 public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepository;
     private final SectionRepository sectionRepository;
+    private final VideoFileRepository videoFileRepository;
 
     @Override
     public Page<LessonResponse> getLessons(Pageable pageable) {
@@ -32,17 +35,20 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public LessonResponse createLesson(CreateLessonRequestDto request) {
-        Section section = sectionRepository.findById(request.getSectionId()).orElseThrow(() -> new RuntimeException("Section not found"));
-        return toResponse(lessonRepository.save(convertToEntity(request, section)));
+        Section section = sectionRepository.findById(request.getSectionId())
+                .orElseThrow(() -> new RuntimeException("Section not found"));
+        VideoFile videoFile = resolveVideoFile(request.getVideoFileId());
+        return toResponse(lessonRepository.save(convertToEntity(request, section, videoFile)));
     }
 
     @Override
     public LessonResponse updateLesson(String id, UpdateLessonRequestDto request) {
-        Lesson lesson = lessonRepository.findById(UUID.fromString(id)).orElseThrow(() -> new RuntimeException("Lesson not found"));
+        Lesson lesson = lessonRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
         lesson.setTitle(request.getTitle());
         lesson.setDescription(request.getDescription());
         lesson.setType(request.getType());
-        lesson.setVideo_url(request.getVideoUrl());
+        lesson.setVideoFile(resolveVideoFile(request.getVideoFileId()));
         lesson.setIs_preview(request.getIsPreview());
         lesson.setSort_order(request.getSortOrder());
         return toResponse(lessonRepository.save(lesson));
@@ -55,12 +61,18 @@ public class LessonServiceImpl implements LessonService {
         return toResponse(lesson);
     }
 
-    private Lesson convertToEntity(CreateLessonRequestDto request, Section section) {
+    private VideoFile resolveVideoFile(UUID videoFileId) {
+        if (videoFileId == null) return null;
+        return videoFileRepository.findById(videoFileId)
+                .orElseThrow(() -> new RuntimeException("VideoFile not found: " + videoFileId));
+    }
+
+    private Lesson convertToEntity(CreateLessonRequestDto request, Section section, VideoFile videoFile) {
         return Lesson.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .type(request.getType())
-                .video_url(request.getVideoUrl())
+                .videoFile(videoFile)
                 .is_preview(request.getIsPreview())
                 .sort_order(request.getSortOrder())
                 .status(CourseStatusEnum.DRAFT)
@@ -69,12 +81,14 @@ public class LessonServiceImpl implements LessonService {
     }
 
     private LessonResponse toResponse(Lesson lesson) {
+        VideoFile videoFile = lesson.getVideoFile();
         return LessonResponse.builder()
                 .id(lesson.getId())
                 .title(lesson.getTitle())
                 .description(lesson.getDescription())
                 .type(lesson.getType())
-                .videoUrl(lesson.getVideo_url())
+                .videoFileId(videoFile != null ? videoFile.getId() : null)
+                .videoUrl(videoFile != null ? videoFile.getPublicUrl() : null)
                 .isPreview(lesson.getIs_preview())
                 .sortOrder(lesson.getSort_order())
                 .status(lesson.getStatus())

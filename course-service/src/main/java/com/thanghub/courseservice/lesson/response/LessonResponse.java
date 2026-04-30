@@ -18,6 +18,7 @@ public class LessonResponse {
     private String title;
     private String description;
     private LessonTypeEnum type;
+    private UUID videoFileId;
     private String videoUrl;
     private Boolean isPreview;
     private Integer sortOrder;

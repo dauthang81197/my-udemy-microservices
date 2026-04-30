@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="04-create-video-files-table" author="thanghub">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="video_files"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="video_files">
+
+            <!-- BaseEntity -->
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="deleted_at" type="TIMESTAMP"/>
+
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="original_filename" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="content_type" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="file_size" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="r2_key" type="VARCHAR(500)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="public_url" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,4 +1,5 @@
 package com.thanghub.courseservice.section;
+
 import com.thanghub.common.ApiResponseBase;
 import com.thanghub.common.mapper.PaginationMapper;
 import com.thanghub.common.response.PaginationResponse;
@@ -44,8 +45,8 @@ public class SectionAdminController {
             summary = "Section",
             description = "Return Section"
     )
-    @GetMapping(":id")
-    public ResponseEntity<?> getSections(@RequestParam("id") String id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getSections(@PathVariable String id) {
         SectionResponse Section = sectionService.getSection(id);
         return ResponseEntity.ok(ApiResponseBase.ok("Login successfully", Section));
     }
@@ -59,7 +60,7 @@ public class SectionAdminController {
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
     @PostMapping()
-    public ResponseEntity<?> createSection(CreateSectionRequestDto request) {
+    public ResponseEntity<?> createSection(@RequestBody CreateSectionRequestDto request) {
         SectionResponse createSectionRequestDto = sectionService.createSection(request);
         return ResponseEntity.ok(ApiResponseBase.ok("Login successfully", createSectionRequestDto));
     }
@@ -72,8 +73,8 @@ public class SectionAdminController {
             @ApiResponse(responseCode = "200", description = "Update Section successfully"),
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
-    @PutMapping(":id")
-    public ResponseEntity<?> updateSection(@RequestParam("id") String id, UpdateSectionRequestDto request) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateSection(@PathVariable String id, @RequestBody UpdateSectionRequestDto request) {
         SectionResponse createSectionRequestDto = sectionService.updateSection(id, request);
         return ResponseEntity.ok(ApiResponseBase.ok("Update successfully", createSectionRequestDto));
     }
@@ -86,8 +87,8 @@ public class SectionAdminController {
             @ApiResponse(responseCode = "200", description = "Update Section successfully"),
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
-    @DeleteMapping(":id")
-    public ResponseEntity<?> deleteSection(@RequestParam("id") String id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteSection(@PathVariable String id) {
         SectionResponse createSectionRequestDto = sectionService.deleteSection(id);
         return ResponseEntity.ok(ApiResponseBase.ok("Delete successfully", createSectionRequestDto));
     }

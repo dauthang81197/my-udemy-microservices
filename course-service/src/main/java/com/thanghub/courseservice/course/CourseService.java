@@ -1,5 +1,7 @@
 package com.thanghub.courseservice.course;
 
+import com.thanghub.common.enums.CourseStatusEnum;
+import com.thanghub.common.enums.LevelEnum;
 import com.thanghub.courseservice.course.request.CreateCourseRequestDto;
 import com.thanghub.courseservice.course.request.UpdateCourseRequestDto;
 import com.thanghub.courseservice.course.response.CourseResponse;
@@ -7,13 +9,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CourseService {
-    Page<CourseResponse> getCourses(Pageable pageable);
+    Page<CourseResponse> getCourses(Boolean isAdmin, String title, CourseStatusEnum status, LevelEnum level, Pageable pageable);
 
     CourseResponse getCourse(String id);
 
-    Course createCourse(CreateCourseRequestDto request);
+    CourseResponse createCourse(CreateCourseRequestDto request);
 
-    Course updateCourse(String id, UpdateCourseRequestDto request);
+    CourseResponse updateCourse(String id, UpdateCourseRequestDto request);
 
-    Course deleteCourse(String id);
+    CourseResponse publicCourse(String id);
+
+    CourseResponse deleteCourse(String id);
 }

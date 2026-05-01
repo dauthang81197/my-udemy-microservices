@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="07-create-user-lesson-progress-table" author="thanghub">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_lesson_progress"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="user_lesson_progress">
+
+            <!-- BaseEntity -->
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="deleted_at" type="TIMESTAMP"/>
+
+            <!-- UserLessonProgress -->
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lesson_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="current_time" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="is_completed" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="user_lesson_progress"
+                baseColumnNames="lesson_id"
+                referencedTableName="lessons"
+                referencedColumnNames="id"
+                constraintName="fk_user_lesson_progress_lesson"/>
+
+    </changeSet>
+
+</databaseChangeLog>

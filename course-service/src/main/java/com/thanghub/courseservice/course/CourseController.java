@@ -1,6 +1,7 @@
 package com.thanghub.courseservice.course;
 
 import com.thanghub.common.ApiResponseBase;
+import com.thanghub.common.enums.LevelEnum;
 import com.thanghub.common.mapper.PaginationMapper;
 import com.thanghub.common.response.PaginationResponse;
 import com.thanghub.courseservice.course.request.CreateCourseRequestDto;
@@ -26,11 +27,13 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    @Operation(summary = "List courses", description = "Return paginated course list")
+    @Operation(summary = "List courses", description = "Return paginated course list, filterable by title, status, level")
     @GetMapping
     public PaginationResponse<CourseResponse> getCourses(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) LevelEnum level,
             @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<CourseResponse> page = courseService.getCourses(pageable);
+        Page<CourseResponse> page = courseService.getCourses(false, title, null, level, pageable);
         return PaginationMapper.from(page);
     }
 
@@ -48,7 +51,7 @@ public class CourseController {
     })
     @PostMapping
     public ResponseEntity<?> createCourse(@RequestBody CreateCourseRequestDto request) {
-        Course course = courseService.createCourse(request);
+        CourseResponse course = courseService.createCourse(request);
         return ResponseEntity.ok(ApiResponseBase.ok("Create successfully", course));
     }
 
@@ -59,7 +62,7 @@ public class CourseController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCourse(@PathVariable String id, @RequestBody UpdateCourseRequestDto request) {
-        Course course = courseService.updateCourse(id, request);
+        CourseResponse course = courseService.updateCourse(id, request);
         return ResponseEntity.ok(ApiResponseBase.ok("Update successfully", course));
     }
 
@@ -70,7 +73,7 @@ public class CourseController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable String id) {
-        Course course = courseService.deleteCourse(id);
+        CourseResponse course = courseService.deleteCourse(id);
         return ResponseEntity.ok(ApiResponseBase.ok("Delete successfully", course));
     }
 }

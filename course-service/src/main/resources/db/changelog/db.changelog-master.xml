@@ -10,4 +10,6 @@
     <include file="/db/changelog/changes/03-create-lesson-table.xml"/>
     <include file="/db/changelog/changes/04-create-video-files-table.xml"/>
     <include file="/db/changelog/changes/05-alter-lessons-video-file.xml"/>
+    <include file="/db/changelog/changes/06-create-user-course-table.xml"/>
+    <include file="/db/changelog/changes/07-create-user-lesson-progress-table.xml"/>
 </databaseChangeLog>

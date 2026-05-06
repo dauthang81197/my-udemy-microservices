@@ -16,7 +16,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("user-courses")
@@ -46,8 +50,15 @@ public class UserCourseController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @PostMapping
-    public ResponseEntity<?> createUserCourse(@RequestBody CreateUserCourseRequestDto request) {
-        UserCourseResponse userCourse = userCourseService.createUserCourse(request);
+    public ResponseEntity<?> createUserCourse(
+            @RequestBody CreateUserCourseRequestDto request,
+            @AuthenticationPrincipal Jwt jwt) {
+        String userIdClaim = jwt.getClaim("userId");
+        if (userIdClaim == null) {
+            throw new IllegalStateException("Token does not contain userId claim. Please re-login.");
+        }
+        UUID userId = UUID.fromString(userIdClaim);
+        UserCourseResponse userCourse = userCourseService.createUserCourse(request, userId);
         return ResponseEntity.ok(ApiResponseBase.ok("Enrolled successfully", userCourse));
     }
 

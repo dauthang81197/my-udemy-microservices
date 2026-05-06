@@ -2,6 +2,7 @@ package com.thanghub.courseservice.userCourse;
 
 import com.thanghub.courseservice.course.Course;
 import com.thanghub.courseservice.course.CourseRepository;
+import com.thanghub.courseservice.userCourse.request.CreateAdminUserCourseRequestDto;
 import com.thanghub.courseservice.userCourse.request.CreateUserCourseRequestDto;
 import com.thanghub.courseservice.userCourse.request.UpdateUserCourseRequestDto;
 import com.thanghub.courseservice.userCourse.response.UserCourseResponse;
@@ -32,11 +33,30 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
 
     @Override
-    public UserCourseResponse createUserCourse(CreateUserCourseRequestDto request) {
+    public UserCourseResponse createUserAdminCourse(CreateAdminUserCourseRequestDto request) {
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found"));
         UserCourse userCourse = UserCourse.builder()
                 .userId(request.getUserId())
+                .course(course)
+                .status(UserCourseStatusEnum.ENROLLED)
+                .progress(0)
+                .build();
+        return toResponse(userCourseRepository.save(userCourse));
+    }
+
+    @Override
+    public UserCourseResponse createUserCourse(CreateUserCourseRequestDto request, UUID userId) {
+        Course course = courseRepository.findById(request.getCourseId())
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
+        // Check if user is already enrolled in the course
+        boolean alreadyEnrolled = userCourseRepository.existsByUserIdAndCourseId(userId, course.getId());
+        if (alreadyEnrolled) {
+            throw new RuntimeException("User is already enrolled in this course");
+        }
+        UserCourse userCourse = UserCourse.builder()
+                .userId(userId)
                 .course(course)
                 .status(UserCourseStatusEnum.ENROLLED)
                 .progress(0)

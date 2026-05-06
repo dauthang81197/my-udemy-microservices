@@ -3,7 +3,7 @@ package com.thanghub.courseservice.userCourse;
 import com.thanghub.common.ApiResponseBase;
 import com.thanghub.common.mapper.PaginationMapper;
 import com.thanghub.common.response.PaginationResponse;
-import com.thanghub.courseservice.userCourse.request.CreateUserCourseRequestDto;
+import com.thanghub.courseservice.userCourse.request.CreateAdminUserCourseRequestDto;
 import com.thanghub.courseservice.userCourse.request.UpdateUserCourseRequestDto;
 import com.thanghub.courseservice.userCourse.response.UserCourseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,8 +46,8 @@ public class UserCourseAdminController {
             @ApiResponse(responseCode = "401", description = "Check token and role")
     })
     @PostMapping
-    public ResponseEntity<?> createUserCourse(@RequestBody CreateUserCourseRequestDto request) {
-        UserCourseResponse userCourse = userCourseService.createUserCourse(request);
+    public ResponseEntity<?> createUserCourse(@RequestBody CreateAdminUserCourseRequestDto request) {
+        UserCourseResponse userCourse = userCourseService.createUserAdminCourse(request);
         return ResponseEntity.ok(ApiResponseBase.ok("Create successfully", userCourse));
     }
 

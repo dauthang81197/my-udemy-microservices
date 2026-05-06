@@ -10,9 +10,10 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUserCourseRequestDto {
-
-
+public class CreateAdminUserCourseRequestDto {
+    @Schema(description = "User Id", example = "uuid-of-user")
+    private UUID userId;
+    
     @Schema(description = "Course Id", example = "uuid-of-course")
     private UUID courseId;
 }

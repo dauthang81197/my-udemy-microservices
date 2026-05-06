@@ -7,8 +7,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -29,9 +29,9 @@ public class TemplateAdminController {
     }
 
     @Operation(summary = "Download section import template")
-    @GetMapping("/courses/:id/sections")
-    public ResponseEntity<byte[]> downloadSectionTemplate(@RequestParam("id") String id) throws IOException {
-        byte[] file = excelTemplateService.buildSectionTemplate(id);
+    @GetMapping("/courses/{courseId}/sections")
+    public ResponseEntity<byte[]> downloadSectionTemplate(@PathVariable String courseId) throws IOException {
+        byte[] file = excelTemplateService.buildSectionTemplate(courseId);
         return buildResponse(file, "template_sections.xlsx");
     }
 

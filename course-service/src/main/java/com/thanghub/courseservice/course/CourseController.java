@@ -7,6 +7,7 @@ import com.thanghub.common.response.PaginationResponse;
 import com.thanghub.courseservice.course.request.CreateCourseRequestDto;
 import com.thanghub.courseservice.course.request.UpdateCourseRequestDto;
 import com.thanghub.courseservice.course.response.CourseResponse;
+import com.thanghub.courseservice.userCourse.service.CurrentUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,7 +18,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("courses")
@@ -26,14 +31,29 @@ import org.springframework.web.bind.annotation.*;
 public class CourseController {
 
     private final CourseService courseService;
+    private final CurrentUserService currentUserService;
 
     @Operation(summary = "List courses", description = "Return paginated course list, filterable by title, status, level")
     @GetMapping
     public PaginationResponse<CourseResponse> getCourses(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) LevelEnum level,
-            @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<CourseResponse> page = courseService.getCourses(false, title, null, level, pageable);
+            @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.ASC) Pageable pageable,
+            @AuthenticationPrincipal Jwt jwt) throws IllegalAccessException {
+        UUID userId = currentUserService.getUserIdClaim(jwt);
+        Page<CourseResponse> page = courseService.getCourses(userId, title, null, level, pageable);
+        return PaginationMapper.from(page);
+    }
+
+    @Operation(summary = "List courses Enroll", description = "Return paginated course list, filterable by title, status, level")
+    @GetMapping("/enroll")
+    public PaginationResponse<CourseResponse> getCoursesEnroll(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) LevelEnum level,
+            @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.ASC) Pageable pageable,
+            @AuthenticationPrincipal Jwt jwt) throws IllegalAccessException {
+        UUID userId = currentUserService.getUserIdClaim(jwt);
+        Page<CourseResponse> page = courseService.getCoursesEnroll(userId, title, null, level, pageable);
         return PaginationMapper.from(page);
     }
 

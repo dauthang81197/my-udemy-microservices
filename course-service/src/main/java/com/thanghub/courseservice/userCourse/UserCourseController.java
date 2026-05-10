@@ -6,6 +6,7 @@ import com.thanghub.common.response.PaginationResponse;
 import com.thanghub.courseservice.userCourse.request.CreateUserCourseRequestDto;
 import com.thanghub.courseservice.userCourse.request.UpdateUserCourseRequestDto;
 import com.thanghub.courseservice.userCourse.response.UserCourseResponse;
+import com.thanghub.courseservice.userCourse.service.CurrentUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,12 +29,15 @@ import java.util.UUID;
 @Tag(name = "UserCourse")
 public class UserCourseController {
     private final UserCourseService userCourseService;
+    private final CurrentUserService currentUserService;
 
     @Operation(summary = "List user courses", description = "Return paginated user course list")
     @GetMapping
     public PaginationResponse<UserCourseResponse> getUserCourses(
-            @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<UserCourseResponse> page = userCourseService.getUserCourses(pageable);
+            @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+            @AuthenticationPrincipal Jwt jwt) throws IllegalAccessException {
+        UUID userId = currentUserService.getUserIdClaim(jwt);
+        Page<UserCourseResponse> page = userCourseService.getUserCourses(pageable, userId);
         return PaginationMapper.from(page);
     }
 
@@ -52,12 +56,8 @@ public class UserCourseController {
     @PostMapping
     public ResponseEntity<?> createUserCourse(
             @RequestBody CreateUserCourseRequestDto request,
-            @AuthenticationPrincipal Jwt jwt) {
-        String userIdClaim = jwt.getClaim("userId");
-        if (userIdClaim == null) {
-            throw new IllegalStateException("Token does not contain userId claim. Please re-login.");
-        }
-        UUID userId = UUID.fromString(userIdClaim);
+            @AuthenticationPrincipal Jwt jwt) throws IllegalAccessException {
+        UUID userId = currentUserService.getUserIdClaim(jwt);
         UserCourseResponse userCourse = userCourseService.createUserCourse(request, userId);
         return ResponseEntity.ok(ApiResponseBase.ok("Enrolled successfully", userCourse));
     }

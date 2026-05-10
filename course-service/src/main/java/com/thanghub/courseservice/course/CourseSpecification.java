@@ -4,6 +4,9 @@ import com.thanghub.common.enums.CourseStatusEnum;
 import com.thanghub.common.enums.LevelEnum;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+import java.util.UUID;
+
 public class CourseSpecification {
 
     public static Specification<Course> titleContains(String title) {
@@ -21,5 +24,25 @@ public class CourseSpecification {
     public static Specification<Course> hasLevel(LevelEnum level) {
         return (root, query, cb) ->
                 level == null ? cb.conjunction() : cb.equal(root.get("level"), level);
+    }
+
+    public static Specification<Course> excludeCourseIds(List<UUID> courseIds) {
+        return (root, query, cb) -> {
+            if (courseIds == null || courseIds.isEmpty()) {
+                return cb.conjunction(); // No filtering if courseIds is null or empty
+            }
+
+            return cb.not(root.get("id").in(courseIds));
+        };
+    }
+
+    public static Specification<Course> hasCourseIds(List<UUID> courseIds) {
+        return (root, query, cb) -> {
+            if (courseIds == null || courseIds.isEmpty()) {
+                return cb.conjunction(); // No filtering if courseIds is null or empty
+            }
+
+            return root.get("id").in(courseIds);
+        };
     }
 }

@@ -26,6 +26,12 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
 
     @Override
+    public Page<UserCourseResponse> getUserCourses(Pageable pageable, UUID userId) {
+        return userCourseRepository.findAll(pageable)
+                .map(this::toResponse);
+    }
+
+    @Override
     public UserCourseResponse getUserCourse(String id) {
         UserCourse userCourse = userCourseRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new RuntimeException("UserCourse not found"));

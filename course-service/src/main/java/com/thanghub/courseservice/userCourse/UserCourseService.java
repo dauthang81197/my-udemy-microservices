@@ -12,6 +12,8 @@ import java.util.UUID;
 public interface UserCourseService {
     Page<UserCourseResponse> getUserCourses(Pageable pageable);
 
+    Page<UserCourseResponse> getUserCourses(Pageable pageable, UUID userId);
+
     UserCourseResponse getUserCourse(String id);
 
     UserCourseResponse createUserAdminCourse(CreateAdminUserCourseRequestDto request);

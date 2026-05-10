@@ -8,8 +8,14 @@ import com.thanghub.courseservice.course.response.CourseResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.UUID;
+
 public interface CourseService {
     Page<CourseResponse> getCourses(Boolean isAdmin, String title, CourseStatusEnum status, LevelEnum level, Pageable pageable);
+
+    Page<CourseResponse> getCourses(UUID uuid, String title, CourseStatusEnum status, LevelEnum level, Pageable pageable);
+
+    Page<CourseResponse> getCoursesEnroll(UUID uuid, String title, CourseStatusEnum status, LevelEnum level, Pageable pageable);
 
     CourseResponse getCourse(String id);
 

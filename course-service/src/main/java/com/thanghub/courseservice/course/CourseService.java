@@ -4,6 +4,7 @@ import com.thanghub.common.enums.CourseStatusEnum;
 import com.thanghub.common.enums.LevelEnum;
 import com.thanghub.courseservice.course.request.CreateCourseRequestDto;
 import com.thanghub.courseservice.course.request.UpdateCourseRequestDto;
+import com.thanghub.courseservice.course.response.CourseDetailResponse;
 import com.thanghub.courseservice.course.response.CourseResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,9 @@ public interface CourseService {
 
     Page<CourseResponse> getCoursesEnroll(UUID uuid, String title, CourseStatusEnum status, LevelEnum level, Pageable pageable);
 
-    CourseResponse getCourse(String id);
+    CourseDetailResponse getCourse(String id);
+
+    CourseDetailResponse getCourse(String id, UUID userId);
 
     CourseResponse createCourse(CreateCourseRequestDto request);
 

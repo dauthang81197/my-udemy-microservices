@@ -6,6 +6,7 @@ import com.thanghub.common.mapper.PaginationMapper;
 import com.thanghub.common.response.PaginationResponse;
 import com.thanghub.courseservice.course.request.CreateCourseRequestDto;
 import com.thanghub.courseservice.course.request.UpdateCourseRequestDto;
+import com.thanghub.courseservice.course.response.CourseDetailResponse;
 import com.thanghub.courseservice.course.response.CourseResponse;
 import com.thanghub.courseservice.userCourse.service.CurrentUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,10 +58,11 @@ public class CourseController {
         return PaginationMapper.from(page);
     }
 
-    @Operation(summary = "Get course", description = "Return course detail")
+    @Operation(summary = "Get course", description = "Return course detail with sections, lessons, and user progress")
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourse(@PathVariable String id) {
-        CourseResponse course = courseService.getCourse(id);
+    public ResponseEntity<?> getCourse(@PathVariable String id, @AuthenticationPrincipal Jwt jwt) throws IllegalAccessException {
+        UUID userId = jwt != null ? currentUserService.getUserIdClaim(jwt) : null;
+        CourseDetailResponse course = courseService.getCourse(id, userId);
         return ResponseEntity.ok(ApiResponseBase.ok("Success", course));
     }
 

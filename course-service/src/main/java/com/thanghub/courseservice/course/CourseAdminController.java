@@ -7,6 +7,7 @@ import com.thanghub.common.mapper.PaginationMapper;
 import com.thanghub.common.response.PaginationResponse;
 import com.thanghub.courseservice.course.request.CreateCourseRequestDto;
 import com.thanghub.courseservice.course.request.UpdateCourseRequestDto;
+import com.thanghub.courseservice.course.response.CourseDetailResponse;
 import com.thanghub.courseservice.course.response.CourseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,7 +45,7 @@ public class CourseAdminController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<?> getCourses(@PathVariable String id) {
-        CourseResponse course = courseService.getCourse(id);
+        CourseDetailResponse course = courseService.getCourse(id);
         return ResponseEntity.ok(ApiResponseBase.ok("Login successfully", course));
     }
 

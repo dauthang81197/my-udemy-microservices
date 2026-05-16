@@ -41,6 +41,7 @@ public class SectionServiceImpl implements SectionService {
         courseRepository.findById(request.getCourseId()).orElseThrow(() -> new RuntimeException("Course not found"));
         Section section = sectionRepository.findById(UUID.fromString(id)).orElseThrow(() -> new RuntimeException("Section not found"));
         section.setTitle(request.getTitle());
+        section.setSort(request.getSort());
         return toResponse(sectionRepository.save(section));
     }
 
@@ -55,6 +56,7 @@ public class SectionServiceImpl implements SectionService {
         return Section
                 .builder()
                 .title(request.getTitle())
+                .sort(request.getSort())
                 .course(course)
                 .build();
     }
@@ -63,6 +65,7 @@ public class SectionServiceImpl implements SectionService {
         return SectionResponse.builder()
                 .id(section.getId())
                 .title(section.getTitle())
+                .sort(section.getSort())
                 .build();
     }
 }

@@ -16,6 +16,7 @@ import java.util.UUID;
 public class SectionResponse {
     private UUID id;
     private String title;
+    private int sort;
     private String description;
     private LevelEnum level;
     private CourseStatusEnum status;

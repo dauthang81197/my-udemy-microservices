@@ -148,7 +148,7 @@ public class CourseServiceImpl implements CourseService {
 
     private CourseDetailResponse toCourseDetailResponse(Course course, Map<UUID, UserLessonProgress> progressMap) {
         List<SectionDetailResponse> sections = course.getSections().stream()
-                .sorted(Comparator.comparing(Section::getTitle))
+                .sorted(Comparator.comparingInt(Section::getSort))
                 .map(section -> {
                     List<LessonDetailResponse> lessons = section.getLessons().stream()
                             .map(lesson -> toLessonDetailResponse(lesson, progressMap.get(lesson.getId())))
@@ -159,6 +159,7 @@ public class CourseServiceImpl implements CourseService {
                     return SectionDetailResponse.builder()
                             .id(section.getId())
                             .title(section.getTitle())
+                            .sort(section.getSort())
                             .lessons(lessons)
                             .totalLessons(lessons.size())
                             .completedLessons((int) completed)

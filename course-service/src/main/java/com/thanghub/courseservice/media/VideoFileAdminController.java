@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("admin/videos")
@@ -28,21 +29,38 @@ public class VideoFileAdminController {
 
     private final VideoFileService videoFileService;
 
-    @Operation(summary = "Upload video", description = "Upload video file to Cloudflare R2")
+    @Operation(summary = "Upload video", description = "Upload single video file to Cloudflare R2")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Upload successfully"),
             @ApiResponse(responseCode = "400", description = "File is empty or invalid")
     })
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadVideo(
-            @RequestParam("name") String name,
+            @RequestParam("nameSection") String nameSection,
             @RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest()
                     .body(ApiResponseBase.fail("File không được để trống"));
         }
-        VideoFileResponse response = videoFileService.uploadVideo(name, file);
+        VideoFileResponse response = videoFileService.uploadVideo(nameSection, file);
         return ResponseEntity.ok(ApiResponseBase.ok("Upload successfully", response));
+    }
+
+    @Operation(summary = "Upload multiple videos", description = "Upload multiple video files to Cloudflare R2")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Upload successfully"),
+            @ApiResponse(responseCode = "400", description = "One or more files are empty")
+    })
+    @PostMapping(value = "/upload-multiple", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadVideos(
+            @RequestParam("nameSection") String nameSection,
+            @RequestParam("files") List<MultipartFile> files) throws IOException {
+        if (files.stream().anyMatch(MultipartFile::isEmpty)) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponseBase.fail("File không được để trống"));
+        }
+        List<VideoFileResponse> responses = videoFileService.uploadVideos(nameSection, files);
+        return ResponseEntity.ok(ApiResponseBase.ok("Upload successfully", responses));
     }
 
     @Operation(summary = "List videos", description = "Return paginated video file list")

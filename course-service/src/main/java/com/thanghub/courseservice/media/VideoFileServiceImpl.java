@@ -18,6 +18,8 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,8 +37,22 @@ public class VideoFileServiceImpl implements VideoFileService {
     private String publicUrlBase;
 
     @Override
-    public VideoFileResponse uploadVideo(String name, MultipartFile file) throws IOException {
-        String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
+    public VideoFileResponse uploadVideo(String nameSection, MultipartFile file) throws IOException {
+        return toResponse(videoFileRepository.save(buildAndUpload(nameSection, file)));
+    }
+
+    @Override
+    public List<VideoFileResponse> uploadVideos(String nameSection, List<MultipartFile> files) throws IOException {
+        List<VideoFileResponse> results = new ArrayList<>();
+        for (MultipartFile file : files) {
+            results.add(toResponse(videoFileRepository.save(buildAndUpload(nameSection, file))));
+        }
+        return results;
+    }
+
+    private VideoFile buildAndUpload(String nameSection, MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename();
+        String ext = StringUtils.getFilenameExtension(originalFilename);
         String r2Key = "videos/" + UUID.randomUUID() + (ext != null ? "." + ext : "");
 
         r2Client.putObject(
@@ -50,15 +66,14 @@ public class VideoFileServiceImpl implements VideoFileService {
         );
 
         VideoFile videoFile = new VideoFile();
-        videoFile.setName(name);
-        videoFile.setOriginalFilename(file.getOriginalFilename());
+        videoFile.setNameSection(nameSection);
+        videoFile.setOriginalFilename(originalFilename);
         videoFile.setContentType(file.getContentType());
         videoFile.setFileSize(file.getSize());
         videoFile.setR2Key(r2Key);
         videoFile.setPublicUrl(publicUrlBase + "/" + r2Key);
         videoFile.setStatus(VideoFileStatus.ACTIVE);
-
-        return toResponse(videoFileRepository.save(videoFile));
+        return videoFile;
     }
 
     @Override
@@ -107,7 +122,7 @@ public class VideoFileServiceImpl implements VideoFileService {
     private VideoFileResponse toResponse(VideoFile videoFile, String presignedUrl) {
         return VideoFileResponse.builder()
                 .id(videoFile.getId().toString())
-                .name(videoFile.getName())
+                .nameSection(videoFile.getNameSection())
                 .originalFilename(videoFile.getOriginalFilename())
                 .contentType(videoFile.getContentType())
                 .fileSize(videoFile.getFileSize())

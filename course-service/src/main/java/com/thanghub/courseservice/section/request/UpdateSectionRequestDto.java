@@ -21,4 +21,9 @@ public class UpdateSectionRequestDto {
             example = "CourseId of course"
     )
     private UUID courseId;
+    @Schema(
+            description = "Sort order",
+            example = "1"
+    )
+    private int sort;
 }

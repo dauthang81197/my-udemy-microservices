@@ -15,8 +15,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class VideoFile extends BaseEntity {
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "name_section", nullable = false)
+    private String nameSection;
 
     @Column(name = "original_filename", nullable = false)
     private String originalFilename;

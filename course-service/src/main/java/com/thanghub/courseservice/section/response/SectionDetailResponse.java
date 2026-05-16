@@ -16,6 +16,7 @@ import java.util.UUID;
 public class SectionDetailResponse {
     private UUID id;
     private String title;
+    private int sort;
     private List<LessonDetailResponse> lessons;
     private int totalLessons;
     private int completedLessons;

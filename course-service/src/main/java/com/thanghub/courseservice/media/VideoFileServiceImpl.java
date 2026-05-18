@@ -126,10 +126,22 @@ public class VideoFileServiceImpl implements VideoFileService {
     @Override
     public VideoFileResponse completeMultipartUpload(CompleteUploadRequest req) {
         var parts = req.getParts().stream()
-                .map(p -> CompletedPart.builder()
-                        .partNumber(p.getPartNumber())
-                        .eTag(p.getETag())
-                        .build())
+                .map(p -> {
+                    String eTag = p.getETag();
+                    if (eTag == null || eTag.isBlank()) {
+                        throw new IllegalArgumentException(
+                                "ETag is null for part " + p.getPartNumber() +
+                                ". Ensure CORS ExposeHeaders includes ETag on the R2 bucket.");
+                    }
+                    // R2/S3 requires ETag wrapped in double quotes in the CompleteMultipartUpload XML
+                    if (!eTag.startsWith("\"")) {
+                        eTag = "\"" + eTag + "\"";
+                    }
+                    return CompletedPart.builder()
+                            .partNumber(p.getPartNumber())
+                            .eTag(eTag)
+                            .build();
+                })
                 .toList();
 
         r2Client.completeMultipartUpload(r -> r

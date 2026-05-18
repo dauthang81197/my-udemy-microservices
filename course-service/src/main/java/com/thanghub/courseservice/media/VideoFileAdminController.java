@@ -3,6 +3,7 @@ package com.thanghub.courseservice.media;
 import com.thanghub.common.ApiResponseBase;
 import com.thanghub.common.mapper.PaginationMapper;
 import com.thanghub.common.response.PaginationResponse;
+import com.thanghub.courseservice.media.request.CompleteUploadRequest;
 import com.thanghub.courseservice.media.response.VideoFileResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,13 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("admin/videos")
 @RequiredArgsConstructor
 @Tag(name = "Video")
 public class VideoFileAdminController {
-
     private final VideoFileService videoFileService;
 
     @Operation(summary = "Upload video", description = "Upload single video file to Cloudflare R2")
@@ -57,7 +58,7 @@ public class VideoFileAdminController {
             @RequestParam("files") List<MultipartFile> files) throws IOException {
         if (files.stream().anyMatch(MultipartFile::isEmpty)) {
             return ResponseEntity.badRequest()
-                    .body(ApiResponseBase.fail("File không được để trống"));
+                    .body(ApiResponseBase.fail("File not empty"));
         }
         List<VideoFileResponse> responses = videoFileService.uploadVideos(nameSection, files);
         return ResponseEntity.ok(ApiResponseBase.ok("Upload successfully", responses));
@@ -88,4 +89,24 @@ public class VideoFileAdminController {
         VideoFileResponse response = videoFileService.deleteVideoFile(id);
         return ResponseEntity.ok(ApiResponseBase.ok("Deleted successfully", response));
     }
+
+    @PostMapping("/initiate")
+    public ResponseEntity<?> initiate(@RequestParam String filename) {
+        return ResponseEntity.ok(ApiResponseBase.ok("Initiated", videoFileService.initiateMultipartUpload(filename)));
+    }
+
+    @GetMapping("/presign")
+    public ResponseEntity<?> presign(
+            @RequestParam String key,
+            @RequestParam String uploadId,
+            @RequestParam int partNumber) {
+        return ResponseEntity.ok(ApiResponseBase.ok("Presigned", videoFileService.presignUploadPart(key, uploadId, partNumber)));
+    }
+
+    @PostMapping("/complete")
+    public ResponseEntity<?> complete(@RequestBody CompleteUploadRequest req) {
+        VideoFileResponse response = videoFileService.completeMultipartUpload(req);
+        return ResponseEntity.ok(ApiResponseBase.ok("Upload completed", response));
+    }
+
 }

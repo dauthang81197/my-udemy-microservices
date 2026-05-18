@@ -1,5 +1,6 @@
 package com.thanghub.courseservice.media;
 
+import com.thanghub.courseservice.media.request.CompleteUploadRequest;
 import com.thanghub.courseservice.media.response.VideoFileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CompletedPart;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -96,6 +99,53 @@ public class VideoFileServiceImpl implements VideoFileService {
                 .key(videoFile.getR2Key())
                 .build());
         videoFile.setStatus(VideoFileStatus.DELETED);
+        return toResponse(videoFileRepository.save(videoFile));
+    }
+
+    @Override
+    public Map<String, String> initiateMultipartUpload(String filename) {
+        var response = r2Client.createMultipartUpload(b -> b
+                .bucket(bucket)
+                .key(filename)
+                .contentType("video/mp4"));
+        return Map.of("uploadId", response.uploadId(), "key", filename);
+    }
+
+    @Override
+    public Map<String, String> presignUploadPart(String key, String uploadId, int partNumber) {
+        var presignedUrl = r2Presigner.presignUploadPart(r -> r
+                .signatureDuration(Duration.ofMinutes(60))
+                .uploadPartRequest(u -> u
+                        .bucket(bucket)
+                        .key(key)
+                        .uploadId(uploadId)
+                        .partNumber(partNumber)));
+        return Map.of("url", presignedUrl.url().toString());
+    }
+
+    @Override
+    public VideoFileResponse completeMultipartUpload(CompleteUploadRequest req) {
+        var parts = req.getParts().stream()
+                .map(p -> CompletedPart.builder()
+                        .partNumber(p.getPartNumber())
+                        .eTag(p.getETag())
+                        .build())
+                .toList();
+
+        r2Client.completeMultipartUpload(r -> r
+                .bucket(bucket)
+                .key(req.getKey())
+                .uploadId(req.getUploadId())
+                .multipartUpload(m -> m.parts(parts)));
+
+        VideoFile videoFile = new VideoFile();
+        videoFile.setNameSection(req.getNameSection());
+        videoFile.setOriginalFilename(req.getOriginalFilename());
+        videoFile.setContentType(req.getContentType());
+        videoFile.setFileSize(req.getFileSize());
+        videoFile.setR2Key(req.getKey());
+        videoFile.setPublicUrl(publicUrlBase + "/" + req.getKey());
+        videoFile.setStatus(VideoFileStatus.ACTIVE);
         return toResponse(videoFileRepository.save(videoFile));
     }
 

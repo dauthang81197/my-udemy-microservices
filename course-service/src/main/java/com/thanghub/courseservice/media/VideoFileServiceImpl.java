@@ -56,7 +56,7 @@ public class VideoFileServiceImpl implements VideoFileService {
     private VideoFile buildAndUpload(String nameSection, MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
         String ext = StringUtils.getFilenameExtension(originalFilename);
-        String r2Key = "videos/" + UUID.randomUUID() + (ext != null ? "." + ext : "");
+        String r2Key = "/video" + UUID.randomUUID() + (ext != null ? "." + ext : "");
 
         r2Client.putObject(
                 PutObjectRequest.builder()
@@ -131,7 +131,7 @@ public class VideoFileServiceImpl implements VideoFileService {
                     if (eTag == null || eTag.isBlank()) {
                         throw new IllegalArgumentException(
                                 "ETag is null for part " + p.getPartNumber() +
-                                ". Ensure CORS ExposeHeaders includes ETag on the R2 bucket.");
+                                        ". Ensure CORS ExposeHeaders includes ETag on the R2 bucket.");
                     }
                     // R2/S3 requires ETag wrapped in double quotes in the CompleteMultipartUpload XML
                     if (!eTag.startsWith("\"")) {

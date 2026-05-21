@@ -1,5 +1,6 @@
 package com.thanghub.courseservice.media.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class CompleteUploadRequest {
     @Data
     public static class PartInfo {
         private int partNumber;
+        @JsonProperty("eTag")
         private String eTag;
     }
 }

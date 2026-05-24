@@ -24,7 +24,7 @@ jobs:
       - name: Build JAR
         run: |
           chmod +x ./mvnw
-          ./mvnw clean package -pl ${{ matrix.service }} -am -DskipTests
+          ./mvnw clean package -pl ${{ matrix.service }} -am -Dmaven.test.skip=true
 
       - name: Set image tag
         id: vars

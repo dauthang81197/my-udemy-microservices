@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  gateway-service:
+    image: ${DOCKER_USERNAME}/gateway-service:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - SWAGGER_ENABLED=false
+      - SWAGGER_UI_ENABLED=false
+    env_file: /opt/my-udemy/backend/.env.prod
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+    networks: [app-net]
+
+  auth-service:
+    image: ${DOCKER_USERNAME}/auth-service:latest
+    env_file: /opt/my-udemy/backend/.env.prod
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+    networks: [app-net]
+
+  course-service:
+    image: ${DOCKER_USERNAME}/course-service:latest
+    env_file: /opt/my-udemy/backend/.env.prod
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+    networks: [app-net]
+
+networks:
+  app-net:
+    driver: overlay

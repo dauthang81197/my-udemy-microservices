@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git *)",
+      "Bash(Get-Content \"C:\\\\Users\\\\thang\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--Project-my-udemy-microservices\\\\1303bea7-ed52-4999-bb85-62ccf24006b0\\\\tasks\\\\b8aapnkwm.output\")",
+      "Bash(Select-Object -Last 50)"
+    ]
+  }
+}

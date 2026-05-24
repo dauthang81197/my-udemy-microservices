@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  gateway-service:
+    image: ${DOCKER_USERNAME}/gateway-service:staging
+    ports:
+      - "8100:8000"
+    environment:
+      - LOG_LEVEL_ROOT=DEBUG
+      - SWAGGER_ENABLED=true
+      - SWAGGER_UI_ENABLED=true
+    env_file: /opt/my-udemy/backend/.env.staging
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks: [app-net]
+
+  auth-service:
+    image: ${DOCKER_USERNAME}/auth-service:staging
+    env_file: /opt/my-udemy/backend/.env.staging
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks: [app-net]
+
+  course-service:
+    image: ${DOCKER_USERNAME}/course-service:staging
+    env_file: /opt/my-udemy/backend/.env.staging
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    networks: [app-net]
+
+networks:
+  app-net:
+    driver: overlay

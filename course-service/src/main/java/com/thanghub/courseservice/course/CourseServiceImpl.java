@@ -6,8 +6,14 @@ import com.thanghub.courseservice.course.request.CreateCourseRequestDto;
 import com.thanghub.courseservice.course.request.UpdateCourseRequestDto;
 import com.thanghub.courseservice.course.response.CourseDetailResponse;
 import com.thanghub.courseservice.course.response.CourseResponse;
+import com.thanghub.common.enums.LessonTypeEnum;
+import com.thanghub.courseservice.course.request.AutoSetupRequestDto;
+import com.thanghub.courseservice.course.response.AutoSetupResultDto;
 import com.thanghub.courseservice.lesson.Lesson;
+import com.thanghub.courseservice.lesson.LessonRepository;
 import com.thanghub.courseservice.lesson.response.LessonDetailResponse;
+import com.thanghub.courseservice.media.VideoFile;
+import com.thanghub.courseservice.media.VideoFileRepository;
 import com.thanghub.courseservice.section.Section;
 import com.thanghub.courseservice.section.SectionRepository;
 import com.thanghub.courseservice.section.response.SectionDetailResponse;
@@ -23,11 +29,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service()
@@ -35,6 +45,8 @@ import java.util.stream.Collectors;
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final SectionRepository sectionRepository;
+    private final LessonRepository lessonRepository;
+    private final VideoFileRepository videoFileRepository;
     private final UserCourseRepository userCourseRepository;
     private final UserLessonProgressRepository userLessonProgressRepository;
 
@@ -212,6 +224,102 @@ public class CourseServiceImpl implements CourseService {
                 .status(lesson.getStatus())
                 .isStarted(progress != null)
                 .progress(progressResponse)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public AutoSetupResultDto autoSetupFromVideos(String courseId, List<UUID> videoIds) {
+        Course course = courseRepository.findById(UUID.fromString(courseId))
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
+        List<String> errors = new ArrayList<>();
+
+        if (videoIds == null || videoIds.isEmpty()) {
+            return AutoSetupResultDto.builder()
+                    .sectionsCreated(0).lessonsCreated(0).errors(errors).build();
+        }
+
+        Map<UUID, VideoFile> videoMap = videoFileRepository.findAllById(videoIds)
+                .stream().collect(Collectors.toMap(VideoFile::getId, v -> v));
+
+        record ParsedLesson(String title, VideoFile video) {}
+
+        // [^/]+ prevents greedy match from crossing directory separators
+        Pattern pattern = Pattern.compile("^(\\d+)-([^/]+)/(\\d+)-([^/]+)\\.[^.]+$");
+        TreeMap<Integer, String> sectionTitles = new TreeMap<>();
+        TreeMap<Integer, TreeMap<Integer, ParsedLesson>> sections = new TreeMap<>();
+
+        for (UUID videoId : videoIds) {
+            VideoFile video = videoMap.get(videoId);
+            if (video == null) {
+                errors.add(videoId + ": video not found");
+                continue;
+            }
+            String filename = video.getOriginalFilename();
+            if (filename == null || filename.isBlank()) {
+                errors.add(videoId + ": filename is empty");
+                continue;
+            }
+            Matcher matcher = pattern.matcher(filename);
+            if (!matcher.matches()) {
+                errors.add(filename + ": invalid filename format");
+                continue;
+            }
+            int sectionOrder;
+            int lessonOrder;
+            try {
+                sectionOrder = Integer.parseInt(matcher.group(1));
+                lessonOrder = Integer.parseInt(matcher.group(3));
+            } catch (NumberFormatException e) {
+                errors.add(filename + ": order number out of range");
+                continue;
+            }
+            String sectionTitle = matcher.group(2).replace("-", " ");
+            String lessonTitle = matcher.group(4).replace("-", " ");
+
+            sectionTitles.putIfAbsent(sectionOrder, sectionTitle);
+            TreeMap<Integer, ParsedLesson> lessonMap =
+                    sections.computeIfAbsent(sectionOrder, k -> new TreeMap<>());
+            if (lessonMap.containsKey(lessonOrder)) {
+                errors.add(filename + ": duplicate lesson order " + lessonOrder + " in section " + sectionOrder);
+                continue;
+            }
+            lessonMap.put(lessonOrder, new ParsedLesson(lessonTitle, video));
+        }
+
+        int sectionsCreated = 0;
+        int lessonsCreated = 0;
+
+        for (Map.Entry<Integer, TreeMap<Integer, ParsedLesson>> sEntry : sections.entrySet()) {
+            int sectionSort = sEntry.getKey();
+            Section section = Section.builder()
+                    .title(sectionTitles.get(sectionSort))
+                    .sort(sectionSort)
+                    .course(course)
+                    .build();
+            section = sectionRepository.save(section);
+            sectionsCreated++;
+
+            for (Map.Entry<Integer, ParsedLesson> lEntry : sEntry.getValue().entrySet()) {
+                Lesson lesson = new Lesson();
+                lesson.setTitle(lEntry.getValue().title());
+                lesson.setDescription("");
+                lesson.setType(LessonTypeEnum.VIDEO);
+                lesson.setVideoFile(lEntry.getValue().video());
+                lesson.setIs_preview(false);
+                lesson.setSort_order(lEntry.getKey());
+                lesson.setStatus(CourseStatusEnum.DRAFT);
+                lesson.setSection(section);
+                lessonRepository.save(lesson);
+                lessonsCreated++;
+            }
+        }
+
+        return AutoSetupResultDto.builder()
+                .sectionsCreated(sectionsCreated)
+                .lessonsCreated(lessonsCreated)
+                .errors(errors)
                 .build();
     }
 }

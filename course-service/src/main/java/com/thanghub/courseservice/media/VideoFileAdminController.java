@@ -37,13 +37,14 @@ public class VideoFileAdminController {
     })
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadVideo(
+            @RequestParam("courseId") String courseId,
             @RequestParam("nameSection") String nameSection,
             @RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest()
                     .body(ApiResponseBase.fail("File không được để trống"));
         }
-        VideoFileResponse response = videoFileService.uploadVideo(nameSection, file);
+        VideoFileResponse response = videoFileService.uploadVideo(courseId, nameSection, file);
         return ResponseEntity.ok(ApiResponseBase.ok("Upload successfully", response));
     }
 
@@ -54,21 +55,23 @@ public class VideoFileAdminController {
     })
     @PostMapping(value = "/upload-multiple", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadVideos(
+            @RequestParam("courseId") String courseId,
             @RequestParam("nameSection") String nameSection,
             @RequestParam("files") List<MultipartFile> files) throws IOException {
         if (files.stream().anyMatch(MultipartFile::isEmpty)) {
             return ResponseEntity.badRequest()
                     .body(ApiResponseBase.fail("File not empty"));
         }
-        List<VideoFileResponse> responses = videoFileService.uploadVideos(nameSection, files);
+        List<VideoFileResponse> responses = videoFileService.uploadVideos(courseId, nameSection, files);
         return ResponseEntity.ok(ApiResponseBase.ok("Upload successfully", responses));
     }
 
-    @Operation(summary = "List videos", description = "Return paginated video file list")
+    @Operation(summary = "List videos", description = "Return paginated video file list, optionally filtered by courseId")
     @GetMapping
     public PaginationResponse<VideoFileResponse> getVideoFiles(
+            @RequestParam(required = false) String courseId,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<VideoFileResponse> page = videoFileService.getVideoFiles(pageable);
+        Page<VideoFileResponse> page = videoFileService.getVideoFiles(courseId, pageable);
         return PaginationMapper.from(page);
     }
 

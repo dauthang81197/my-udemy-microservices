@@ -9,6 +9,7 @@ import java.util.List;
 public class CompleteUploadRequest {
     private String key;
     private String uploadId;
+    private String courseId;
     private String nameSection;
     private String originalFilename;
     private String contentType;

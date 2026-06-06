@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class VideoFileResponse {
     private String id;
+    private String courseId;
     private String nameSection;
     private String originalFilename;
     private String contentType;

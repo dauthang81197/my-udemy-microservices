@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface VideoFileService {
-    VideoFileResponse uploadVideo(String nameSection, MultipartFile file) throws IOException;
-    List<VideoFileResponse> uploadVideos(String nameSection, List<MultipartFile> files) throws IOException;
-    Page<VideoFileResponse> getVideoFiles(Pageable pageable);
+    VideoFileResponse uploadVideo(String courseId, String nameSection, MultipartFile file) throws IOException;
+    List<VideoFileResponse> uploadVideos(String courseId, String nameSection, List<MultipartFile> files) throws IOException;
+    Page<VideoFileResponse> getVideoFiles(String courseId, Pageable pageable);
     VideoFileResponse getVideoFile(String id);
     VideoFileResponse deleteVideoFile(String id);
 

@@ -14,4 +14,5 @@
     <include file="/db/changelog/changes/07-create-user-lesson-progress-table.xml"/>
     <include file="/db/changelog/changes/08-alter-sections-add-sort.xml"/>
     <include file="/db/changelog/changes/09-alter-video-files-rename-name-to-name-section.xml"/>
+    <include file="/db/changelog/changes/10-alter-video-files-add-course-id.xml"/>
 </databaseChangeLog>

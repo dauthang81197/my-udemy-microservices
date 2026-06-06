@@ -35,21 +35,23 @@ public class VideoFileController {
     })
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadVideo(
+            @RequestParam("courseId") String courseId,
             @RequestParam("name") String name,
             @RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest()
                     .body(ApiResponseBase.fail("File không được để trống"));
         }
-        VideoFileResponse response = videoFileService.uploadVideo(name, file);
+        VideoFileResponse response = videoFileService.uploadVideo(courseId, name, file);
         return ResponseEntity.ok(ApiResponseBase.ok("Upload successfully", response));
     }
 
-    @Operation(summary = "List videos", description = "Return paginated video file list")
+    @Operation(summary = "List videos", description = "Return paginated video file list, optionally filtered by courseId")
     @GetMapping
     public PaginationResponse<VideoFileResponse> getVideoFiles(
+            @RequestParam(required = false) String courseId,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<VideoFileResponse> page = videoFileService.getVideoFiles(pageable);
+        Page<VideoFileResponse> page = videoFileService.getVideoFiles(courseId, pageable);
         return PaginationMapper.from(page);
     }
 

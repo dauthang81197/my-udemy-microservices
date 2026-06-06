@@ -1,5 +1,8 @@
 package com.thanghub.courseservice.media;
 
+import com.thanghub.courseservice.course.Course;
+import com.thanghub.courseservice.course.CourseRepository;
+import com.thanghub.common.exception.MyBadRequestException;
 import com.thanghub.courseservice.media.request.CompleteUploadRequest;
 import com.thanghub.courseservice.media.response.VideoFileResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,9 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -32,6 +38,7 @@ public class VideoFileServiceImpl implements VideoFileService {
     private final S3Client r2Client;
     private final S3Presigner r2Presigner;
     private final VideoFileRepository videoFileRepository;
+    private final CourseRepository courseRepository;
 
     @Value("${cloudflare.r2.bucket}")
     private String bucket;
@@ -40,20 +47,22 @@ public class VideoFileServiceImpl implements VideoFileService {
     private String publicUrlBase;
 
     @Override
-    public VideoFileResponse uploadVideo(String nameSection, MultipartFile file) throws IOException {
-        return toResponse(videoFileRepository.save(buildAndUpload(nameSection, file)));
+    public VideoFileResponse uploadVideo(String courseId, String nameSection, MultipartFile file) throws IOException {
+        Course course = findCourse(courseId);
+        return toResponse(videoFileRepository.save(buildAndUpload(course, nameSection, file)));
     }
 
     @Override
-    public List<VideoFileResponse> uploadVideos(String nameSection, List<MultipartFile> files) throws IOException {
+    public List<VideoFileResponse> uploadVideos(String courseId, String nameSection, List<MultipartFile> files) throws IOException {
+        Course course = findCourse(courseId);
         List<VideoFileResponse> results = new ArrayList<>();
         for (MultipartFile file : files) {
-            results.add(toResponse(videoFileRepository.save(buildAndUpload(nameSection, file))));
+            results.add(toResponse(videoFileRepository.save(buildAndUpload(course, nameSection, file))));
         }
         return results;
     }
 
-    private VideoFile buildAndUpload(String nameSection, MultipartFile file) throws IOException {
+    private VideoFile buildAndUpload(Course course, String nameSection, MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
         String ext = StringUtils.getFilenameExtension(originalFilename);
         String r2Key = "/video" + UUID.randomUUID() + (ext != null ? "." + ext : "");
@@ -69,6 +78,7 @@ public class VideoFileServiceImpl implements VideoFileService {
         );
 
         VideoFile videoFile = new VideoFile();
+        videoFile.setCourse(course);
         videoFile.setNameSection(nameSection);
         videoFile.setOriginalFilename(originalFilename);
         videoFile.setContentType(file.getContentType());
@@ -80,7 +90,10 @@ public class VideoFileServiceImpl implements VideoFileService {
     }
 
     @Override
-    public Page<VideoFileResponse> getVideoFiles(Pageable pageable) {
+    public Page<VideoFileResponse> getVideoFiles(String courseId, Pageable pageable) {
+        if (courseId != null) {
+            return videoFileRepository.findByCourse_Id(parseCourseId(courseId), pageable).map(this::toResponse);
+        }
         return videoFileRepository.findAll(pageable).map(this::toResponse);
     }
 
@@ -150,7 +163,9 @@ public class VideoFileServiceImpl implements VideoFileService {
                 .uploadId(req.getUploadId())
                 .multipartUpload(m -> m.parts(parts)));
 
+        Course course = findCourse(req.getCourseId());
         VideoFile videoFile = new VideoFile();
+        videoFile.setCourse(course);
         videoFile.setNameSection(req.getNameSection());
         videoFile.setOriginalFilename(req.getOriginalFilename());
         videoFile.setContentType(req.getContentType());
@@ -159,6 +174,19 @@ public class VideoFileServiceImpl implements VideoFileService {
         videoFile.setPublicUrl(publicUrlBase + "/" + req.getKey());
         videoFile.setStatus(VideoFileStatus.ACTIVE);
         return toResponse(videoFileRepository.save(videoFile));
+    }
+
+    private Course findCourse(String courseId) {
+        return courseRepository.findById(parseCourseId(courseId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found: " + courseId));
+    }
+
+    private UUID parseCourseId(String courseId) {
+        try {
+            return UUID.fromString(courseId);
+        } catch (IllegalArgumentException e) {
+            throw new MyBadRequestException("Invalid courseId format: " + courseId);
+        }
     }
 
     private VideoFile findById(String id) {
@@ -184,6 +212,7 @@ public class VideoFileServiceImpl implements VideoFileService {
     private VideoFileResponse toResponse(VideoFile videoFile, String presignedUrl) {
         return VideoFileResponse.builder()
                 .id(videoFile.getId().toString())
+                .courseId(videoFile.getCourse() != null ? videoFile.getCourse().getId().toString() : null)
                 .nameSection(videoFile.getNameSection())
                 .originalFilename(videoFile.getOriginalFilename())
                 .contentType(videoFile.getContentType())

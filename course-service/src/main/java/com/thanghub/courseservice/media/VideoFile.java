@@ -1,6 +1,7 @@
 package com.thanghub.courseservice.media;
 
 import com.thanghub.common.BaseEntity;
+import com.thanghub.courseservice.course.Course;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,4 +37,8 @@ public class VideoFile extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private VideoFileStatus status = VideoFileStatus.ACTIVE;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course;
 }
